@@ -1,3 +1,4 @@
+import logging
 import os
 import sys
 
@@ -14,6 +15,9 @@ from dev.service.ml_service import blp as ml_blp
 def create_app():
     app = Flask('Lanify')
     app.config.from_object(Config)
+    app.logger.setLevel(logging.INFO)
+
+    app.logger.info(f"API Documentation: http://{Config.APP_HOST}:{Config.APP_PORT}/swagger-ui")
 
     register_extensions(app)
     register_blueprints()
