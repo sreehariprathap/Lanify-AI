@@ -9,6 +9,8 @@
 
 ### Installation
 
+1. Ensure you are in the codebase directory (`dev/`).
+
 1. Create and activate a virtual environment:
 
    #### Using venv
@@ -26,9 +28,16 @@
     conda activate lanify
     ```
 
-2. Install dependencies:
+1. Install dependencies:
+
    ```bash
    pip install -r requirements.txt
+   ```
+
+1. Apply database migrations:
+
+   ```bash
+   flask db upgrade
    ```
 
 ---
