@@ -1,8 +1,13 @@
 flask-marshmallow==1.3.0
 Flask-Migrate==4.1.0
 flask-smorest==0.45.0
+fqdn==1.5.1
+isoduration==20.11.0
+jsonpointer==3.0.0
 marshmallow-sqlalchemy==1.4.0
+notebook==7.3.2
 pip==25.0
-setuptools==75.8.0
 tinycss2==1.4.0
+uri-template==1.3.0
+webcolors==24.11.1
 wheel==0.45.1
