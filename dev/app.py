@@ -1,3 +1,9 @@
+import os
+import sys
+
+# make sure the project directory is in the path
+sys.path.insert(0, os.path.join(os.path.abspath(os.path.dirname(__file__)), '..'))
+
 from flask import Flask
 
 from dev.config import Config
