@@ -3,7 +3,6 @@ Flask-Migrate==4.1.0
 flask-smorest==0.45.0
 marshmallow-sqlalchemy==1.4.0
 pip==25.0
-pipreqs==0.5.0
 setuptools==75.8.0
 tinycss2==1.4.0
 wheel==0.45.1
