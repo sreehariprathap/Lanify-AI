@@ -1,0 +1,4 @@
+lane_id,image_path,timestamp,weather,condition
+1,images/lane1.jpg,2023-07-01 08:15:00,clear,good
+2,images/lane2.jpg,2023-07-01 08:20:00,cloudy,moderate
+3,images/lane3.jpg,2023-07-01 08:25:00,rainy,poor
