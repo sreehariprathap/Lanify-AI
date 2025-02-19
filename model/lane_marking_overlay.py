@@ -69,7 +69,8 @@ class LaneDetector:
         lane_overlay = np.dstack((blank_layer, self.avg_lane_prediction, blank_layer))
 
         # Resize the overlay to match the original input image
-        lane_overlay_resized = self.resize_image(lane_overlay, (1280, 720))
+        orig_size = (input_image.shape[1], input_image.shape[0])
+        lane_overlay_resized = self.resize_image(lane_overlay, orig_size)
 
         # Merge the detected lane overlay with the original image
         output_image = cv2.addWeighted(input_image, 1, lane_overlay_resized, 1, 0)
