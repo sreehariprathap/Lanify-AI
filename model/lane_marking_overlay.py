@@ -33,10 +33,11 @@ class LaneDetector:
         Returns:
         numpy.ndarray: Resized image.
         """
-        image_array = (image_array * 255).astype(np.uint8)  # Convert from [0,1] float to uint8 [0,255]
+        image_array = image_array.astype(np.uint8)
         img = Image.fromarray(image_array)
-        img = img.resize(target_size, Image.LANCZOS)
+        img = img.resize(target_size)
         return np.array(img)
+
 
     def detect_lane(self, input_image):
         """
