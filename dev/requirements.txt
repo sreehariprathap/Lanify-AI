@@ -11,3 +11,4 @@ tinycss2==1.4.0
 uri-template==1.3.0
 webcolors==24.11.1
 wheel==0.45.1
+psycopg2-binary==2.9.9

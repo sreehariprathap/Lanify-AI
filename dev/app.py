@@ -9,7 +9,9 @@ from flask import Flask
 
 from dev.config import Config
 from dev.extensions import db, ma, api, migrate
-from dev.service.ml_service import blp as ml_blp
+from dev.service.driving_training_service import blp as driving_training_blp
+from dev.service.dashcam_service import blp as dashcam_blp
+from dev.service.road_infra_service import blp as road_infra_blp
 
 
 def create_app():
@@ -33,7 +35,9 @@ def register_extensions(app):
 
 
 def register_blueprints():
-    api.register_blueprint(ml_blp)
+    api.register_blueprint(driving_training_blp)
+    api.register_blueprint(dashcam_blp)
+    api.register_blueprint(road_infra_blp)
 
 
 if __name__ == '__main__':
