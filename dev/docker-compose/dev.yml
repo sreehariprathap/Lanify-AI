@@ -1,8 +1,7 @@
-version: '3.8'
-
 name: lanify-dev
 services:
   lanify-db:
+    container_name: lanify-db
     image: postgres:17
     restart: always
     environment:
