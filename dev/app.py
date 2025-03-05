@@ -23,7 +23,7 @@ def create_app():
     app.config.from_object(Config)
     app.logger.setLevel(logging.INFO)
 
-    app.logger.info(f"API Documentation: http://{Config.HOST}:{Config.APP_PORT}/swagger-ui")
+    app.logger.info(f"API Documentation: http://{Config.APP_HOST}:{Config.APP_PORT}/swagger-ui")
 
     register_extensions(app)
     register_blueprints()
@@ -71,5 +71,5 @@ eventlet.spawn(send_periodic_events)
 
 if __name__ == '__main__':
     app = create_app()
-    socketio.run(app, host="0.0.0.0", port=5173, debug=True)
-    socketio.run(app, host=Config.HOST, port=Config.APP_PORT, debug=True)
+    # socketio.run(app, host="0.0.0.0", port=5173, debug=True)
+    socketio.run(app, host=Config.APP_HOST, port=Config.APP_PORT, debug=True)

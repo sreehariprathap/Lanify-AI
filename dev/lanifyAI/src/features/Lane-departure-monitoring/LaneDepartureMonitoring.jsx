@@ -5,7 +5,7 @@ import DrivingAnimation from "../../assets/driving.json";
 import toast, { Toaster } from 'react-hot-toast';
 
 // Connect to the backend WebSocket server
-const socket = io("http://localhost:5173", {
+const socket = io("http://localhost:8080", {
   transports: ["websocket"], // Force WebSocket transport
   reconnectionAttempts: 5,
   timeout: 5000,
