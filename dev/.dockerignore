@@ -1,2 +1,3 @@
 docker/
 lanifyAI/
+__pycache__/
