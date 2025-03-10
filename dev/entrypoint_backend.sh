@@ -1,4 +1,4 @@
 #!/bin/sh
 cd /app/dev
-flask db upgrade
+python -m flask db upgrade
 python app.py
