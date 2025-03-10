@@ -1,11 +1,17 @@
 from flask.views import MethodView
 from flask_smorest import Blueprint
 from marshmallow import fields
+from flask_socketio import SocketIO
+import eventlet
 
 from dev.extensions import ma, db
 from dev.models.dashcam import DashcamAlert, SafetyReport
 
+# Initialize Flask Blueprint
 blp = Blueprint('Dashcam', __name__, url_prefix='/api/dashcam', description='Low-Cost Smart Dashcam API')
+
+# Initialize SocketIO (Assuming 'app' is defined in your main Flask app)
+socketio = SocketIO(cors_allowed_origins="*")  # Will attach this to the Flask app later
 
 
 class DashcamAlertSchema(ma.SQLAlchemyAutoSchema):
@@ -60,10 +66,28 @@ class DashcamAlertList(MethodView):
     @blp.response(201, DashcamAlertSchema)
     def post(self, new_alert):
         """
-        Create a new dashcam alert
+        Create a new dashcam alert and emit an event every 10 seconds for demonstration purposes
         """
         db.session.add(new_alert)
         db.session.commit()
+
+        def emit_alert_repeatedly():
+            while True:
+                socketio.emit("alertEvent", {
+                    "id": new_alert.id,
+                    "dashcam_id": new_alert.dashcam_id,
+                    "vehicle_id": new_alert.vehicle_id,
+                    "timestamp": str(new_alert.timestamp),
+                    "latitude": new_alert.latitude,
+                    "longitude": new_alert.longitude,
+                    "lane_deviation": new_alert.lane_deviation,
+                    "description": new_alert.description,
+                    "severity": new_alert.severity
+                })
+                eventlet.sleep(10)
+
+        eventlet.spawn_n(emit_alert_repeatedly)
+
         return new_alert
 
 
