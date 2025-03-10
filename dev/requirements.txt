@@ -6,9 +6,10 @@ isoduration==20.11.0
 jsonpointer==3.0.0
 marshmallow-sqlalchemy==1.4.0
 notebook==7.3.2
-pip==25.0
 tinycss2==1.4.0
 uri-template==1.3.0
 webcolors==24.11.1
 wheel==0.45.1
 psycopg2-binary==2.9.9
+Flask-SocketIO==5.5.1
+eventlet==0.39.1
