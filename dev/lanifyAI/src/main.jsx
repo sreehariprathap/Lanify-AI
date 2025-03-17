@@ -6,6 +6,7 @@ import MainLayout from "./layouts/MainLayout";
 import LaneDepartureMonitoring from "./features/Lane-departure-monitoring/LaneDepartureMonitoring.jsx";
 import DrivingReportDashboard from "./features/Driving-report-dashboard/DrivingReportDashboard.jsx";
 import DrivingReport from "./features/Driving-report-dashboard/Driving-Report/DrivingReport.jsx";
+import About from "./features/about/About.jsx";
 
 createRoot(document.getElementById("root")).render(
   <BrowserRouter>
@@ -55,6 +56,14 @@ createRoot(document.getElementById("root")).render(
         element={
           <MainLayout>
             <DrivingReport />
+          </MainLayout>
+        }
+      />
+      <Route
+        path="/about"
+        element={
+          <MainLayout>
+            <About />
           </MainLayout>
         }
       />
