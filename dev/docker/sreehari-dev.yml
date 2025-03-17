@@ -1,7 +1,7 @@
 name: lanify-dev
 services:
   backend:
-    image: brendanlee/lanify-backend:latest
+    image: sreeharidev/lanify-backend:latest
     container_name: lanify-backend
     ports:
       - "8080:8080"
@@ -11,7 +11,7 @@ services:
       - db
 
   frontend:
-    image: brendanlee/lanify-frontend:latest
+    image: sreeharidev/lanify-frontend:latest
     container_name: lanify-frontend
     ports:
       - "3000:80"

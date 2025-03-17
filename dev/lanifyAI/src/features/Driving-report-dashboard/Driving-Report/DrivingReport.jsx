@@ -90,7 +90,7 @@ const DrivingReport = () => {
             <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <span className="font-medium">Driving Alerts:</span>
-                <span className="badge badge-error">{reportData.total_alerts}</span>
+                <span className="badge badge-error p-1 rounded-full">{reportData.total_alerts}</span>
               </div>
               <div>
                 <span className="font-medium">Behaviour Summary:</span>

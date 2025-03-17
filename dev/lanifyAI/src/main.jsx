@@ -42,6 +42,22 @@ createRoot(document.getElementById("root")).render(
           </MainLayout>
         }
       />
+      <Route
+        path="/road-assessment"
+        element={
+          <MainLayout>
+            <DrivingReportDashboard />
+          </MainLayout>
+        }
+      />
+      <Route
+        path="/road-assessment/:locationId"
+        element={
+          <MainLayout>
+            <DrivingReport />
+          </MainLayout>
+        }
+      />
     </Routes>
   </BrowserRouter>
 );
