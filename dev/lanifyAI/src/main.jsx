@@ -7,6 +7,8 @@ import LaneDepartureMonitoring from "./features/Lane-departure-monitoring/LaneDe
 import DrivingReportDashboard from "./features/Driving-report-dashboard/DrivingReportDashboard.jsx";
 import DrivingReport from "./features/Driving-report-dashboard/Driving-Report/DrivingReport.jsx";
 import About from "./features/about/About.jsx";
+import RoadReport from "./features/Road-report-dashboard copy/Road-Report/RoadReport.jsx";
+import RoadReportDashboard from "./features/Road-report-dashboard copy/RoadReportDashboard.jsx";
 
 createRoot(document.getElementById("root")).render(
   <BrowserRouter>
@@ -47,7 +49,7 @@ createRoot(document.getElementById("root")).render(
         path="/road-assessment"
         element={
           <MainLayout>
-            <DrivingReportDashboard />
+            <RoadReportDashboard />
           </MainLayout>
         }
       />
@@ -55,7 +57,7 @@ createRoot(document.getElementById("root")).render(
         path="/road-assessment/:locationId"
         element={
           <MainLayout>
-            <DrivingReport />
+            <RoadReport />
           </MainLayout>
         }
       />
