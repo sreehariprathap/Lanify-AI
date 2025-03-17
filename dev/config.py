@@ -4,7 +4,7 @@ base_path = os.path.abspath(os.path.dirname(__file__))
 
 
 class Config:
-    SQLALCHEMY_DATABASE_URI = "postgresql://postgres:postgres@localhost:5432/lanify"
+    SQLALCHEMY_DATABASE_URI = "postgresql://postgres:postgres@db:5432/lanify"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     API_TITLE = "Lanify API"
     API_VERSION = "v1"
