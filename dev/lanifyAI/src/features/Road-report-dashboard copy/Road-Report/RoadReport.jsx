@@ -31,7 +31,7 @@ const chartConfig = {
   },
 }
 
-const DrivingReport = () => {
+const RoadReport = () => {
   const vehicleId = 1;
 
   const [reportData, setReportData] = useState(null);
@@ -210,4 +210,4 @@ const DrivingReport = () => {
   );
 };
 
-export default DrivingReport;
+export default RoadReport;
