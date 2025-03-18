@@ -8,7 +8,9 @@ from flask.views import MethodView
 from flask_smorest import Blueprint
 from flask_socketio import SocketIO
 from marshmallow import fields
+from moviepy.video.io.VideoFileClip import VideoFileClip
 
+from dev.ai_models.lane_marking_overlay import LaneDetector
 from dev.extensions import ma, db
 from dev.models.dashcam import DashcamAlert, SafetyReport
 
@@ -171,6 +173,20 @@ class VideoResponseSchema(ma.Schema):
 @blp.route('/upload-video')
 class DashcamVideoUpload(MethodView):
 
+    @staticmethod
+    def process_lane_detection_video(input_video_path, output_video_path):
+        # Initialize the LaneDetector with the specified model
+        self_dir = os.path.dirname(__file__)
+        model_path = os.path.abspath(os.path.join(self_dir, '../ai_models/cnn_lane_detection_model.h5'))
+        lane_detector = LaneDetector(model_path)
+
+        # Load input video and process frame-by-frame
+        input_clip = VideoFileClip(input_video_path)
+        processed_clip = input_clip.fl_image(lane_detector.detect_lane)
+
+        # Write the output video
+        processed_clip.write_videofile(output_video_path, audio=False)
+
     @blp.arguments(VideoUploadSchema, location='form')
     @blp.response(201, VideoResponseSchema)
     def post(self, upload_data):
@@ -192,29 +208,16 @@ class DashcamVideoUpload(MethodView):
         file_extension = os.path.splitext(file.filename)[1]
         temp_file_path = os.path.join(temp_dir, f"{file_hash}{file_extension}")
 
-        # Save file to temp location
+        # Save uploaded file to temp location
         file.seek(0)
         file.save(temp_file_path)
 
-        # TODO: Process video file to generate lane detection video
-        # This would involve calling a video processing function
-        # For now, we'll just use the original file for demonstration
-        processed_file = temp_file_path
-
-        # Calculate MD5 hash of the processed file
-        with open(processed_file, 'rb') as f:
-            file_hash = hashlib.md5(f.read()).hexdigest()
-
-        # Save processed video to destination folder
+        # Process the video and save to destination folder
         output_dir = '/app/frontend/dashcam/lane-videos'
         os.makedirs(output_dir, exist_ok=True)
-
-        output_filename = f"{file_hash}{file_extension}"
-        output_path = os.path.join(output_dir, output_filename)
-
-        # Copy file to destination
-        with open(processed_file, 'rb') as src_file, open(output_path, 'wb') as dest_file:
-            dest_file.write(src_file.read())
+        output_filename = f"{file_hash}.mp4"
+        output_file_path = os.path.join(output_dir, output_filename)
+        self.process_lane_detection_video(temp_file_path, output_file_path)
 
         # Generate a safety report
         # In a real scenario, this would be based on video analysis
