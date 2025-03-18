@@ -20,24 +20,14 @@ const LaneDepartureMonitoring = () => {
     setUploading(true);
 
     try {
-      const response = await axios.post("/api/upload", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
+      const response = await axios.post("http://localhost:8080/api/video", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
       });
       setUploadData(response.data);
     } catch (error) {
       console.error("Error uploading video:", error);
-    } finally {
-      setUploadData({
-        videoUrl: "https://www.youtube.com/watch?v=xaS-5l87r3Q",
-        analytics: {
-          total_alerts: 5,
-          alerts_summary: "Frequent lane swerves detected, mostly on left side.",
-          safety_score: 72,
-          recommendations: "Maintain steady steering control and keep focus ahead."
-        }
-      });
-      setUploading(false);
     }
+    setUploading(false);
   };
 
   const handleReset = () => {
