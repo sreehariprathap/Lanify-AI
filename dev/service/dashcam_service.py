@@ -1,8 +1,13 @@
+import hashlib
+import os
+import tempfile
+
+import eventlet
+from flask import request
 from flask.views import MethodView
 from flask_smorest import Blueprint
-from marshmallow import fields
 from flask_socketio import SocketIO
-import eventlet
+from marshmallow import fields
 
 from dev.extensions import ma, db
 from dev.models.dashcam import DashcamAlert, SafetyReport
@@ -151,3 +156,84 @@ class FleetSafetyReportsAPI(MethodView):
         Get safety reports for all vehicles (fleet-level)
         """
         return SafetyReport.query.all()
+
+
+class VideoUploadSchema(ma.Schema):
+    vehicle_id = fields.Str(required=True)
+    dashcam_id = fields.Str(required=True)
+
+
+class VideoResponseSchema(ma.Schema):
+    safety_report = fields.Nested(SafetyReportSchema)
+    video_url = fields.Str()
+
+
+@blp.route('/upload-video')
+class DashcamVideoUpload(MethodView):
+
+    @blp.arguments(VideoUploadSchema, location='form')
+    @blp.response(201, VideoResponseSchema)
+    def post(self, upload_data):
+        """
+        Upload a dashcam video for processing
+
+        Returns a safety report and the URL to the processed video
+        """
+        if 'video' not in request.files:
+            blp.response(400, description="No video file provided")
+
+        file = request.files['video']
+        vehicle_id = upload_data['vehicle_id']
+        dashcam_id = upload_data['dashcam_id']
+
+        # Create temp directory if it doesn't exist
+        temp_dir = tempfile.gettempdir()
+        file_hash = hashlib.md5(file.read()).hexdigest()
+        file_extension = os.path.splitext(file.filename)[1]
+        temp_file_path = os.path.join(temp_dir, f"{file_hash}{file_extension}")
+
+        # Save file to temp location
+        file.seek(0)
+        file.save(temp_file_path)
+
+        # TODO: Process video file to generate lane detection video
+        # This would involve calling a video processing function
+        # For now, we'll just use the original file for demonstration
+        processed_file = temp_file_path
+
+        # Calculate MD5 hash of the processed file
+        with open(processed_file, 'rb') as f:
+            file_hash = hashlib.md5(f.read()).hexdigest()
+
+        # Save processed video to destination folder
+        output_dir = '/app/frontend/dashcam/lane-videos'
+        os.makedirs(output_dir, exist_ok=True)
+
+        output_filename = f"{file_hash}{file_extension}"
+        output_path = os.path.join(output_dir, output_filename)
+
+        # Copy file to destination
+        with open(processed_file, 'rb') as src_file, open(output_path, 'wb') as dest_file:
+            dest_file.write(src_file.read())
+
+        # Generate a safety report
+        # In a real scenario, this would be based on video analysis
+        safety_report = SafetyReport(
+            vehicle_id=vehicle_id,
+            total_alerts=0,  # Placeholder
+            alerts_summary=f"Video analysis completed for dashcam {dashcam_id}",
+            safety_score=0.0,  # Placeholder
+            recommendations="No recommendations available yet"
+        )
+
+        db.session.add(safety_report)
+        db.session.commit()
+
+        # Generate video URL
+        video_url = f"/dashcam/lane-videos/{output_filename}"
+
+        # Return response with safety report and video URL
+        return {
+            "safety_report": SafetyReportSchema().dump(safety_report),
+            "video_url": video_url
+        }
