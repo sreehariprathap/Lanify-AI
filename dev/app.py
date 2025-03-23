@@ -1,9 +1,7 @@
 import logging
 import os
 import sys
-import eventlet
 from flask import Flask
-from flask_socketio import SocketIO
 
 # Make sure the project directory is in the path
 sys.path.insert(0, os.path.join(os.path.abspath(os.path.dirname(__file__)), '..'))
@@ -14,62 +12,45 @@ from dev.service.driving_training_service import blp as driving_training_blp
 from dev.service.dashcam_service import blp as dashcam_blp
 from dev.service.road_infra_service import blp as road_infra_blp
 
-# Initialize SocketIO globally
-socketio = SocketIO(cors_allowed_origins="*")
-
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler("application.log"),  # Log to a file
+        logging.StreamHandler()  # Also log to the console
+    ]
+)
+logger = logging.getLogger(__name__)
 
 def create_app():
     app = Flask('Lanify')
     app.config.from_object(Config)
     app.logger.setLevel(logging.INFO)
 
+    logger.info("Creating Flask application and loading configuration.")
     app.logger.info(f"API Documentation: http://{Config.APP_HOST}:{Config.APP_PORT}/swagger-ui")
 
     register_extensions(app)
     register_blueprints()
 
-    # Attach SocketIO to the app
-    socketio.init_app(app)
-
+    logger.info("Flask application setup complete.")
     return app
 
-
 def register_extensions(app):
+    logger.info("Registering Flask extensions.")
     db.init_app(app)
     ma.init_app(app)
     api.init_app(app)
     migrate.init_app(app, db)
 
-
 def register_blueprints():
+    logger.info("Registering API blueprints.")
     api.register_blueprint(driving_training_blp)
     api.register_blueprint(dashcam_blp)
     api.register_blueprint(road_infra_blp)
 
-
-@socketio.on("connect")
-def handle_connect():
-    print("Client connected")
-    socketio.emit("alertEvent", {"message": "Welcome! You are connected."})
-
-
-@socketio.on("disconnect")
-def handle_disconnect():
-    print("Client disconnected")
-
-
-# Emit periodic test events
-def send_periodic_events():
-    while True:
-        socketio.emit("alertEvent", {"message": "New event from Flask!"})
-        eventlet.sleep(5)
-
-
-# Start emitting events in a background thread
-eventlet.spawn(send_periodic_events)
-
-
 if __name__ == '__main__':
+    logger.info("Starting the Flask application.")
     app = create_app()
-    # socketio.run(app, host="0.0.0.0", port=5173, debug=True)
-    socketio.run(app, host=Config.APP_HOST, port=Config.APP_PORT, debug=True)
+    app.run(host=Config.APP_HOST, port=Config.APP_PORT, debug=True)
