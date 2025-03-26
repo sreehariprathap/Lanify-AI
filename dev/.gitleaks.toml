@@ -1,0 +1,40 @@
+[[rules]]
+id='dbuser'
+description = "Database User"
+regex = '''POSTGRES_USER[=]["'\s]*[a-zA-Z0-9-_]+'''
+tags = ["dbuser"]
+[[rules]]
+id='dbpassword'
+description = "Database Password"
+regex = '''POSTGRES_PASSWORD[=]["'\s]*[a-zA-Z0-9-_]+'''
+tags = ["dbpassword"]
+[[rules]]
+id='dbhost'
+description = "Database Host"
+regex = '''DATABASE_URL[=]["'\s]*[a-zA-Z0-9-.]+'''
+tags = ["dbhost"]
+[[rules]]
+id='apikey'
+description = "API Key"
+regex = '''API_KEY[=]["'\s]*[a-zA-Z0-9-_]+'''
+tags = ["apikey"]
+[[rules]]
+id='featurenames'
+description = "Feature Names"
+regex = '''FEATURE_NAMES[=]["'\s]*[a-zA-Z0-9-_]+'''
+tags = ["featurenames"]
+[[rules]]
+id='hyperparamc'
+description = "Hyperparameter C"
+regex = '''HYPERPARAM_C[=]["'\s]*[0-9]+'''
+tags = ["hyperparamc"]
+[[rules]]
+id='testsize'
+description = "Test Size"
+regex = '''TEST_SIZE[=]["'\s]*[0-9.]+'''
+tags = ["testsize"]
+[[rules]]
+id='randomstate'
+description = "Random State"
+regex = '''RANDOM_STATE[=]["'\s]*[0-9]+'''
+tags = ["randomstate"]
