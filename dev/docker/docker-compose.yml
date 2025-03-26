@@ -8,7 +8,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - DATABASE_URL=postgresql://postgres:postgres@db:5432/lanify
+      - DATABASE_URL=${DATABASE_URL}
     depends_on:
       - db
 
@@ -16,9 +16,9 @@ services:
     image: postgres:17
     container_name: lanify-db
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=lanify
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
     volumes:
       - lanify_db_data:/var/lib/postgresql/data
     ports:
