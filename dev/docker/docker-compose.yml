@@ -1,0 +1,28 @@
+name: lanify-dev
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: lanify-app
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/lanify
+    depends_on:
+      - db
+
+  db:
+    image: postgres:17
+    container_name: lanify-db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=lanify
+    volumes:
+      - lanify_db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  lanify_db_data:
