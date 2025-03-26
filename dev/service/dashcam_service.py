@@ -19,7 +19,7 @@ blp = Blueprint('Dashcam', __name__, url_prefix='/api/dashcam', description='Low
 
 # Initialize SocketIO (Assuming 'app' is defined in your main Flask app)
 socketio = SocketIO(cors_allowed_origins="*")  # Will attach this to the Flask app later
-openai.api_key = "sk-dummykey1234567890abcdef"
+API_KEY = "API_KEY=myKey1234-ABC"
 
 
 class DashcamAlertSchema(ma.SQLAlchemyAutoSchema):
