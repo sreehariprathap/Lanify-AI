@@ -1,0 +1,17 @@
+name: lanify-dev
+services:
+  lanify-db:
+    container_name: lanify-db
+    image: postgres:17
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=lanify
+    ports:
+      - "5432:5432"
+    volumes:
+      - lanify_db_data:/var/lib/postgresql/data
+
+volumes:
+  lanify_db_data:
