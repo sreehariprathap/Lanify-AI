@@ -240,3 +240,29 @@ class DashcamVideoUpload(MethodView):
             "safety_report": SafetyReportSchema().dump(safety_report),
             "video_url": video_url
         }
+
+
+from dev.ai_models.training_pipeline import train_lane_detection_model
+
+
+@blp.route('/train')
+class TrainLaneModelAPI(MethodView):
+    @blp.response(200)
+    def post(self):
+        """
+        Train the lane detection model and log the run to MLflow.
+
+        Returns:
+            JSON with training loss and validation loss.
+        """
+        try:
+            result = train_lane_detection_model()
+            return {
+                "message": "Training completed successfully",
+                "metrics": result
+            }
+        except Exception as e:
+            return {
+                "message": "Training failed",
+                "error": str(e)
+            }, 500
