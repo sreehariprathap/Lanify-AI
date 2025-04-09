@@ -3,6 +3,8 @@ import cv2
 from PIL import Image
 from moviepy.editor import VideoFileClip
 from keras.models import load_model
+import mlflow
+import os
 
 
 class LaneDetector:
@@ -17,7 +19,18 @@ class LaneDetector:
         Parameters:
         model_path (str): Path to the pre-trained Keras model.
         """
-        self.model = load_model(model_path, compile=False, custom_objects={})
+
+        try:
+            # Try loading from MLflow Model Registry (Production stage)
+            self.model = mlflow.keras.load_model("models:/LaneDetectionModel/Production")
+            print("[INFO] Loaded model from MLflow Registry")
+        except Exception as e:
+            if model_path and os.path.exists(model_path):
+                print(f"[WARN] MLflow loading failed, falling back to .h5 model: {model_path}")
+                self.model = load_model(model_path, compile=False, custom_objects={})
+            else:
+                raise RuntimeError("Model loading failed. Please check MLflow registry or local path.") from e
+
         self.recent_predictions = []
         self.avg_lane_prediction = []
 
