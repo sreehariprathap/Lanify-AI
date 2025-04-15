@@ -9,8 +9,13 @@ import DrivingReport from "./features/Driving-report-dashboard/Driving-Report/Dr
 import About from "./features/about/About.jsx";
 import RoadReport from "./features/Road-report-dashboard copy/Road-Report/RoadReport.jsx";
 import RoadReportDashboard from "./features/Road-report-dashboard copy/RoadReportDashboard.jsx";
+import {APIProvider} from '@vis.gl/react-google-maps';
+
+const apiUrl = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
 createRoot(document.getElementById("root")).render(
+<APIProvider apiKey={apiUrl}>
+
   <BrowserRouter>
     <Routes>
       <Route
@@ -71,4 +76,5 @@ createRoot(document.getElementById("root")).render(
       />
     </Routes>
   </BrowserRouter>
+  </APIProvider>
 );

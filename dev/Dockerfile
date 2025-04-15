@@ -62,6 +62,8 @@ RUN rm -rf lanifyAI
 COPY --from=frontend-build /app/frontend/dist /app/frontend
 
 EXPOSE 3000
+EXPOSE 5000
+
 
 # Start the backend
 ENTRYPOINT ["sh", "entrypoint.sh"]

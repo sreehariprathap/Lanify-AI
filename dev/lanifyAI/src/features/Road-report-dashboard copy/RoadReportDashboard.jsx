@@ -1,33 +1,20 @@
-import { useState } from 'react';
+// import { Map } from '@vis.gl/react-google-maps';
+// import { useState } from 'react';
 import { useNavigate } from 'react-router';
 
 const RoadReportDashboard = () => {
-    const [locationName, setLocationName] = useState('');
-    const [locationDetails, setLocationDetails] = useState('');
     const navigate = useNavigate();
 
     const handleGenerateReport = () => {
-        if (locationName.trim() && locationDetails.trim()) {
-            // Passing the values as query parameters
-            navigate(`/road-report?name=${encodeURIComponent(locationName)}&details=${encodeURIComponent(locationDetails)}`);
-        }
+        // navigate('/road-assessment');
+        // Replace with your logic to generate a report
+        console.log('Generate Report button clicked');
     };
 
     return (
         <div className="p-5 flex gap-2 justify-center">
-            <input
-                type="text"
-                className="input"
-                placeholder="Enter location name"
-                value={locationName}
-                onChange={(e) => setLocationName(e.target.value)}
-            />
-            <textarea
-                className="input"
-                placeholder="Enter location details"
-                value={locationDetails}
-                onChange={(e) => setLocationDetails(e.target.value)}
-            />
+            {/* <PlaceSearch/> */}
+            {/* <MapComponent/> */}
             <button className="btn btn-primary" onClick={handleGenerateReport}>
                 Generate Report
             </button>

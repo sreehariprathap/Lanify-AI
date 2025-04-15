@@ -23,6 +23,15 @@ services:
       - lanify_db_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:v2.10.2
+    container_name: lanify-mlflow
+    command: mlflow server --backend-store-uri sqlite:///mlflow.db --default-artifact-root /mlflow/artifacts --host 0.0.0.0
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./mlflow_artifacts:/mlflow/artifacts
+      - ./mlflow.db:/mlflow.db
 
 volumes:
   lanify_db_data:
