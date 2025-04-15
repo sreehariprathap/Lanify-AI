@@ -7,6 +7,7 @@ services:
     container_name: lanify-app
     ports:
       - "3000:3000"
+      - "5001:5000"
     environment:
       - DATABASE_URL=${DATABASE_URL}
     depends_on:
