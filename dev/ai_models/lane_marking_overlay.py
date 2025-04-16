@@ -20,6 +20,10 @@ class LaneDetector:
             self.model = mlflow.keras.load_model("models:/LaneDetectionModel/Production")
             print("[INFO] Loaded model from MLflow Registry")
         except Exception as e:
+            if model_path and os.path.exists(model_path):
+                print(f"[WARN] MLflow loading failed, falling back to .h5 model: {model_path}")
+                self.model = load_model(model_path, compile=False, custom_objects={})
+            else:
                 raise RuntimeError("Model loading failed. Please check MLflow registry or local path.") from e
 
         self.recent_predictions = []
@@ -200,13 +204,6 @@ class LaneDetector:
 
         return output_image
 
-        cv2.putText(output_image, text, (50, 50), font, 1, (255, 255, 255), 2, cv2.LINE_AA)
-
-        # Add lane drift warning (if any)
-        if warning_text:
-            cv2.putText(output_image, warning_text, (50, 100), font, 1.2, (0, 0, 255), 3, cv2.LINE_AA)
-
-        return output_image
 
 def process_video(input_video_path, output_video_path, model_path='full_CNN_model.h5'):
     """
@@ -229,7 +226,7 @@ def process_video(input_video_path, output_video_path, model_path='full_CNN_mode
     processed_clip.write_videofile(output_video_path, audio=False)
 
 
-if _name_ == '_main_':
+if __name__ == '__main__':
     # Paths for input and output videos
     input_video = "demo.mp4"
     output_video = "processed_lane_detection.mp4"
