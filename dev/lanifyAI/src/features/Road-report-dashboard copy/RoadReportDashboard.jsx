@@ -1,32 +1,23 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
+import Autocomplete from "react-google-autocomplete";
+import { usePlace } from '../../context/PlaceContext';
 
 const RoadReportDashboard = () => {
-    const [locationName, setLocationName] = useState('');
     const [locationDetails, setLocationDetails] = useState('');
     const navigate = useNavigate();
+    const { setPlace } = usePlace();
 
     const handleGenerateReport = () => {
-        if (locationName.trim() && locationDetails.trim()) {
-            // Passing the values as query parameters
-            navigate(`/road-report?name=${encodeURIComponent(locationName)}&details=${encodeURIComponent(locationDetails)}`);
-        }
+        setPlace(locationDetails)
+        navigate(`/road-assessment/${locationDetails.place_id}`);
     };
+
 
     return (
         <div className="p-5 flex gap-2 justify-center">
-            <input
-                type="text"
-                className="input"
-                placeholder="Enter location name"
-                value={locationName}
-                onChange={(e) => setLocationName(e.target.value)}
-            />
-            <textarea
-                className="input"
-                placeholder="Enter location details"
-                value={locationDetails}
-                onChange={(e) => setLocationDetails(e.target.value)}
+            <Autocomplete
+                onPlaceSelected={(place) => setLocationDetails(place)}
             />
             <button className="btn btn-primary" onClick={handleGenerateReport}>
                 Generate Report

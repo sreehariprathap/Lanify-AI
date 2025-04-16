@@ -35,7 +35,7 @@ This document outlines how to set up, run, and manage the Lanify backend applica
    ```
    Build the Docker image without caching:
    ```
-   docker build --no-cache -f docker-compose.yml -t lanify-backend .
+   docker build --no-cache -f docker-compose.yml -t lanify-app .
    ```
 
 2. **Navigate to the Codebase**
