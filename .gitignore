@@ -1,0 +1,6 @@
+.idea/
+/dev/test.db
+__pycache__/
+dev/.env
+mlruns/
+application.log
