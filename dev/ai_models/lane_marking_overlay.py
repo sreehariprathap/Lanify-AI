@@ -1,39 +1,50 @@
-import numpy as np
-import cv2
-from PIL import Image
-from moviepy.editor import VideoFileClip
-from keras.models import load_model
 import csv
 import os
+
+import cv2
+import mlflow
+import numpy as np
+from PIL import Image
+from keras.models import load_model
+from moviepy.editor import VideoFileClip
+
 
 class LaneDetector:
     """
     A class to handle lane detection and averaging lane predictions.
     """
-    def _init_(self, model_path='full_CNN_model.h5', fps=30):
-        self.model = load_model(model_path, compile=False, custom_objects={})
+
+    def __init__(self, model_path='cnn_lane_detection_model.h5', fps=30, log_csv_path="lane_offset_log.csv"):
+        try:
+            # Try loading from MLflow Model Registry (Production stage)
+            self.model = mlflow.keras.load_model("models:/LaneDetectionModel/Production")
+            print("[INFO] Loaded model from MLflow Registry")
+        except Exception as e:
+                raise RuntimeError("Model loading failed. Please check MLflow registry or local path.") from e
+
         self.recent_predictions = []
         self.avg_lane_prediction = []
         self.frame_count = 0
         self.fps = fps
-        self.lane_drift_threshold = 0.02  # meters
+        self.lane_drift_threshold = 0.03  # meters
         self.offset_log = []
 
-        self.csv_path = "lane_offset_log.csv"
-        with open(self.csv_path, mode='w', newline='') as file:
-            writer = csv.writer(file)
-            writer.writerow(["Frame", "Timestamp(s)", "Offset(m)", "Direction", "Drift Warning", "Lane Detected"])
+        # Use the provided log_csv_path
+        self.csv_path = log_csv_path
+        # Ensure the directory exists (if the path includes directories) - optional, but recommended
+        log_dir = os.path.dirname(self.csv_path)
+        if log_dir and not os.path.exists(log_dir):
+            os.makedirs(log_dir, exist_ok=True)
 
-    # def _init_(self, model_path='full_CNN_model.h5'):
-    #     """
-    #     Initializes the lane detector with a pre-trained model.
-
-    #     Parameters:
-    #     model_path (str): Path to the pre-trained Keras model.
-    #     """
-    #     self.model = load_model(model_path, compile=False, custom_objects={})
-    #     self.recent_predictions = []
-    #     self.avg_lane_prediction = []
+        # Initialize the CSV file and write the header
+        try:
+            with open(self.csv_path, mode='w', newline='') as file:
+                writer = csv.writer(file)
+                writer.writerow(["Frame", "Timestamp(s)", "Offset(m)", "Direction", "Drift Warning", "Lane Detected"])
+        except IOError as e:
+            print(f"Error initializing log file {self.csv_path}: {e}")
+            # Disable logging if file creation fails
+            self.csv_path = None
 
     @staticmethod
     def resize_image(image_array, target_size):
@@ -80,8 +91,8 @@ class LaneDetector:
         right_fit = np.polyfit(righty, rightx, 2)
 
         y_eval = height
-        left_x = left_fit[0]*(y_eval**2) + left_fit[1]*y_eval + left_fit[2]
-        right_x = right_fit[0]*(y_eval**2) + right_fit[1]*y_eval + right_fit[2]
+        left_x = left_fit[0] * y_eval ** 2 + left_fit[1] * y_eval + left_fit[2]
+        right_x = right_fit[0] * y_eval ** 2 + right_fit[1] * y_eval + right_fit[2]
 
         lane_center = (left_x + right_x) / 2.0
         car_position = width / 2.0
@@ -107,7 +118,8 @@ class LaneDetector:
 
         with open(self.csv_path, mode='a', newline='') as file:
             writer = csv.writer(file)
-            writer.writerow([self.frame_count, f"{timestamp:.2f}", abs_offset, direction, drift_warning, "Yes" if detected else "No"])
+            writer.writerow([self.frame_count, f"{timestamp:.2f}", abs_offset, direction, drift_warning,
+                             "Yes" if detected else "No"])
 
     def detect_lane(self, input_image):
         """
@@ -152,7 +164,7 @@ class LaneDetector:
         self.log_offset(offset, detected)
 
         # Decide color based on offset
-        threshold = 0.02  # meters
+        threshold = 0.03  # meters
         if offset is not None and abs(offset) > threshold:
             # Red overlay for lane drift
             r = self.avg_lane_prediction.astype(np.uint8)
@@ -179,6 +191,14 @@ class LaneDetector:
             text = f"Vehicle is {abs_offset:.2f} m {direction} of center"
         else:
             text = "Lane not detected"
+
+        cv2.putText(output_image, text, (50, 50), font, 1, (255, 255, 255), 2, cv2.LINE_AA)
+
+        # Add lane drift warning (if any)
+        if warning_text:
+            cv2.putText(output_image, warning_text, (50, 100), font, 1.2, (0, 0, 255), 3, cv2.LINE_AA)
+
+        return output_image
 
         cv2.putText(output_image, text, (50, 50), font, 1, (255, 255, 255), 2, cv2.LINE_AA)
 

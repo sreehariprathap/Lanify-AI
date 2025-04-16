@@ -168,17 +168,18 @@ class VideoUploadSchema(ma.Schema):
 class VideoResponseSchema(ma.Schema):
     safety_report = fields.Nested(SafetyReportSchema)
     video_url = fields.Str()
+    logs = fields.Str()
 
 
 @blp.route('/upload-video')
 class DashcamVideoUpload(MethodView):
 
     @staticmethod
-    def process_lane_detection_video(input_video_path, output_video_path):
+    def process_lane_detection_video(input_video_path, output_video_path, output_logs_path):
         # Initialize the LaneDetector with the specified model
         self_dir = os.path.dirname(__file__)
         model_path = os.path.abspath(os.path.join(self_dir, '../ai_models/cnn_lane_detection_model.h5'))
-        lane_detector = LaneDetector(model_path)
+        lane_detector = LaneDetector(model_path, log_csv_path=output_logs_path)
 
         # Load input video and process frame-by-frame
         input_clip = VideoFileClip(input_video_path)
@@ -217,7 +218,13 @@ class DashcamVideoUpload(MethodView):
         os.makedirs(output_dir, exist_ok=True)
         output_filename = f"{file_hash}.mp4"
         output_file_path = os.path.join(output_dir, output_filename)
-        self.process_lane_detection_video(temp_file_path, output_file_path)
+
+        output_logs_dir = '/app/frontend/dashcam/lane-logs'
+        os.makedirs(output_logs_dir, exist_ok=True)
+        output_logs_filename = f"{file_hash}.csv"
+        output_logs_file_path = os.path.join(output_logs_dir, output_logs_filename)
+
+        self.process_lane_detection_video(temp_file_path, output_file_path, output_logs_file_path)
 
         # Generate a safety report
         # In a real scenario, this would be based on video analysis
@@ -235,10 +242,15 @@ class DashcamVideoUpload(MethodView):
         # Generate video URL
         video_url = f"/dashcam/lane-videos/{output_filename}"
 
+        # load logs csv
+        with open(output_logs_file_path, 'r') as f:
+            logs = f.read()
+
         # Return response with safety report and video URL
         return {
             "safety_report": SafetyReportSchema().dump(safety_report),
-            "video_url": video_url
+            "video_url": video_url,
+            "logs": logs
         }
 
 
