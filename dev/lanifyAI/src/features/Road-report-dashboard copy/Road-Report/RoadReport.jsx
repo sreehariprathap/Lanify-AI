@@ -3,25 +3,43 @@ import { Map } from '@vis.gl/react-google-maps';
 import { usePlace } from '../../../context/PlaceContext';
 import RouteHighlighter from '../../../components/RoadHighlighter';
 
-const MapView = ({  zoom = 14 }) => {
+const MapView = ({ center, zoom }) => {
   // Define the start and end locations for the route.
   const origin = "299 King St N, Waterloo, ON N2L 3G1";
-  const destination = "200 Conestoga Pkwy, Kitchener, ON";
+  const destination = "85 Queen St N, Kitchener, ON N2H 2H1";
+  const destnation2 = "227 King St S, Waterloo, ON N2J 1R2"
+  const destnation3 = "851 Fischer-Hallman Rd, Kitchener, ON N2M 5N8"
 
   return (
     <Map
-      zoom={zoom}
+      defaultCenter={center}  // using defaultCenter so the map can be moved after initialization
+      defaultZoom={zoom}      // using defaultZoom instead of zoom
       mapContainerStyle={{ width: '100%', height: '100%' }}
       // Enable map dragging and more responsive gesture handling.
+      draggableCursor={true}
       options={{
         draggable: true,
         gestureHandling: 'greedy',
+        // Offset the visual center by providing top padding
+        padding: { top: 50, right: 0, bottom: 0, left: 0 },
       }}
     >
       <RouteHighlighter
         origin={origin}
         destination={destination}
         strokeColor="#FF0000"
+        strokeWeight={8}
+      />
+      <RouteHighlighter
+        origin={origin}
+        destination={destnation2}
+        strokeColor="#FFCC80"
+        strokeWeight={8}
+      />
+      <RouteHighlighter
+        origin={origin}
+        destination={destnation3}
+        strokeColor="#00FF00"
         strokeWeight={8}
       />
     </Map>
@@ -44,9 +62,9 @@ const RoadReport = () => {
 
   // Dummy data for road analysis.
   const roadAnalysisData = {
-    accidents: 12, // Dummy value for the number of accidents due to road issues.
+    accidents: 12, // Dummy number of accidents due to road issues.
     averageDrivingScore: 7.8, // Dummy average driving score out of 10.
-    roadConditionIndex: 65, // Dummy index percentage representing road conditions.
+    roadConditionIndex: 65, // Dummy index percentage for road conditions.
   };
 
   return (
