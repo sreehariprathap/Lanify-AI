@@ -1,20 +1,24 @@
-// import { Map } from '@vis.gl/react-google-maps';
-// import { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router';
+import Autocomplete from "react-google-autocomplete";
+import { usePlace } from '../../context/PlaceContext';
 
 const RoadReportDashboard = () => {
+    const [locationDetails, setLocationDetails] = useState('');
     const navigate = useNavigate();
+    const { setPlace } = usePlace();
 
     const handleGenerateReport = () => {
-        // navigate('/road-assessment');
-        // Replace with your logic to generate a report
-        console.log('Generate Report button clicked');
+        setPlace(locationDetails)
+        navigate(`/road-assessment/${locationDetails.place_id}`);
     };
+
 
     return (
         <div className="p-5 flex gap-2 justify-center">
-            {/* <PlaceSearch/> */}
-            {/* <MapComponent/> */}
+            <Autocomplete
+                onPlaceSelected={(place) => setLocationDetails(place)}
+            />
             <button className="btn btn-primary" onClick={handleGenerateReport}>
                 Generate Report
             </button>
